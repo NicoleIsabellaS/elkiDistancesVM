@@ -332,7 +332,7 @@ public class Calculation {
 		long startTime = System.nanoTime();
 
 		try {
-			System.out.print("Step 2 \t CALCULATION OF");
+			System.out.println("Step 2 \t CALCULATION OF");
 
 			String[] ids = patientVectors.keySet().toArray(new String[patientVectors.size()]);
 
@@ -406,7 +406,7 @@ public class Calculation {
 		long stopTime = System.nanoTime();
 		long duration = stopTime - startTimeCosine;
 		final double minutes = ((double) duration * 0.0000000000166667);
-		System.out.println(" - " + new DecimalFormat("###.##########").format(minutes) + "minutes");
+		System.out.println(" -> " + new DecimalFormat("###.##########").format(minutes) + "minutes");
 	}
 
 	/***
