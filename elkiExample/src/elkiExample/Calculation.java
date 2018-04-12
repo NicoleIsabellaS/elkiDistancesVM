@@ -13,7 +13,6 @@ import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -31,8 +30,8 @@ import de.lmu.ifi.dbs.elki.math.linearalgebra.Vector;
  */
 public class Calculation {
 
-	static String path;
-	static Map<String, String> admissionPatientMap = new HashMap<>();
+	static String path = "/home/nicole.sarna/elkiExample/data/data.csv";
+	static Map<Integer, String> admissionPatientMap = new HashMap<>();
 
 	/**
 	 * Invokes vector creation and distance calculation of a given path written by
@@ -45,28 +44,9 @@ public class Calculation {
 	 *             files
 	 */
 	public static void start(int vmID) throws IOException {
-		askUserDataPath();
-		Map<String, Vector> patientsVectors = vectorizePatients();
-		calcDistance(patientsVectors, vmID);
-	}
-
-	/**
-	 * Console scanner asking the user to enter the input data path file.
-	 */
-	public static void askUserDataPath() {
-		String filename = null;
-		Scanner scanner = new Scanner(System.in);
-
-		try {
-			System.out.print("Enter absolute Path to Data File: ");
-			System.out.flush();
-			filename = scanner.nextLine();
-		} catch (Exception e) {
-			System.out.println("Cannot find File " + filename);
-		}
-
-		scanner.close();
-		path = filename;
+		Map<Integer, Vector> patientsVectors = vectorizePatients(vmID);
+		chunkingCalc(patientsVectors, vmID);
+		// calcDistance(patientsVectors, vmID);
 	}
 
 	/**
@@ -79,7 +59,7 @@ public class Calculation {
 	 *             if a failed or interrupted I/O operation occurs reading the input
 	 *             file
 	 */
-	public static Map<String, Vector> vectorizePatients() throws IOException {
+	public static Map<Integer, Vector> vectorizePatients(int vmID) throws IOException {
 		// String path = "data/diabetes.txt";
 		Reader reader = Files.newBufferedReader(Paths.get(path));
 		CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT);
@@ -88,7 +68,8 @@ public class Calculation {
 		// Vector Size 129
 		double[] values = new double[129];
 		Vector userVector = null;
-		Map<String, Vector> vectors = new HashMap<>();
+		Map<Integer, Vector> vectors = new HashMap<>();
+		int rowNumber = 1;
 
 		System.out.println("Step 1 \t CREATE VECTORS");
 		for (CSVRecord csvRecord : csvRecords) {
@@ -219,10 +200,11 @@ public class Calculation {
 			setBinaryVec(readmitted, values, 127);
 
 			userVector = new Vector(values);
-			vectors.put(csvRecord.get(0), userVector);
-			admissionPatientMap.put(csvRecord.get(0), csvRecord.get(1));
+			vectors.put(rowNumber, userVector);
+			admissionPatientMap.put(rowNumber, csvRecord.get(0));
 
 			values = new double[129];
+			rowNumber++;
 		}
 
 		csvParser.close();
@@ -309,8 +291,6 @@ public class Calculation {
 	}
 
 	/**
-	 * TODO measure time of each distance (TODO - Threshold if complication)
-	 * 
 	 * Calculates patients' cosine, euclidean, and manhattan distance function and
 	 * put the result in the appropriate file.
 	 * 
@@ -323,126 +303,156 @@ public class Calculation {
 	 * @throws IOException
 	 */
 	@SuppressWarnings("deprecation")
-	public static void calcDistance(Map<String, Vector> patientVectors, int vmID)
+	public static void calcDistance(Map<Integer, Map<Integer, Vector>> patientVectors, int vmID)
 			throws UnsupportedEncodingException, FileNotFoundException, IOException {
 		CosineDistanceFunction cdf = new CosineDistanceFunction();
 		EuclideanDistanceFunction edf = new EuclideanDistanceFunction();
 		ManhattanDistanceFunction mdf = new ManhattanDistanceFunction();
 
-		long startTime = System.nanoTime();
-
 		try {
 			System.out.println("Step 2 \t CALCULATION OF");
 
-			String[] ids = patientVectors.keySet().toArray(new String[patientVectors.size()]);
-
 			if (vmID == 1) {
-				Writer writerCosine = new BufferedWriter(
-						new OutputStreamWriter(new FileOutputStream("output/cosine_VM1"), "utf-8"));
-				Writer writerEuclidean = new BufferedWriter(
-						new OutputStreamWriter(new FileOutputStream("output/euclidean_VM1"), "utf-8"));
-				Writer writerManhattan = new BufferedWriter(
-						new OutputStreamWriter(new FileOutputStream("output/manhattan_VM1"), "utf-8"));
+				Writer writerCosine = new BufferedWriter(new OutputStreamWriter(
+						new FileOutputStream("/home/nicole.sarna/elkiExample/output/cosine_VM1"), "utf-8"));
+				Writer writerEuclidean = new BufferedWriter(new OutputStreamWriter(
+						new FileOutputStream("/home/nicole.sarna/elkiExample/output/euclidean_VM1"), "utf-8"));
+				Writer writerManhattan = new BufferedWriter(new OutputStreamWriter(
+						new FileOutputStream("/home/nicole.sarna/elkiExample/output/manhattan_VM1"), "utf-8"));
 
 				System.out.println("\t Step 2.1 \t COSINE DISTANCES");
-				distanceCalcTime(patientVectors, cdf, null, null, ids, writerCosine, null, null, 0, 50048, false);
+				distanceCalcTime(patientVectors, cdf, null, null, writerCosine, null, null);
 				System.out.println("\t Step 2.2 \t EUCLIDEAN DISTANCES");
-				distanceCalcTime(patientVectors, null, edf, null, ids, null, writerEuclidean, null, 0, 50048, false);
+				distanceCalcTime(patientVectors, null, edf, null, null, writerEuclidean, null);
 				System.out.println("\t Step 2.3 \t MANHATTAN DISTANCES");
-				distanceCalcTime(patientVectors, null, null, mdf, ids, null, null, writerManhattan, 0, 50048, false);
+				distanceCalcTime(patientVectors, null, null, mdf, null, null, writerManhattan);
 			} else if (vmID == 2) {
-				Writer writerCosine = new BufferedWriter(
-						new OutputStreamWriter(new FileOutputStream("output/cosine_VM2"), "utf-8"));
-				Writer writerEuclidean = new BufferedWriter(
-						new OutputStreamWriter(new FileOutputStream("output/euclidean_VM2"), "utf-8"));
-				Writer writerManhattan = new BufferedWriter(
-						new OutputStreamWriter(new FileOutputStream("output/manhattan_VM2"), "utf-8"));
+				Writer writerCosine = new BufferedWriter(new OutputStreamWriter(
+						new FileOutputStream("/home/nicole.sarna/elkiExample/output/cosine_VM2"), "utf-8"));
+				Writer writerEuclidean = new BufferedWriter(new OutputStreamWriter(
+						new FileOutputStream("/home/nicole.sarna/elkiExample/output/euclidean_VM2"), "utf-8"));
+				Writer writerManhattan = new BufferedWriter(new OutputStreamWriter(
+						new FileOutputStream("/home/nicole.sarna/elkiExample/output/manhattan_VM2"), "utf-8"));
 
 				System.out.println("\t Step 2.1 \t COSINE DISTANCES");
-				distanceCalcTime(patientVectors, cdf, null, null, ids, writerCosine, null, null, 50048, ids.length,
-						false);
+				distanceCalcTime(patientVectors, cdf, null, null, writerCosine, null, null);
 				System.out.println("\t Step 2.2 \t EUCLIDEAN DISTANCES");
-				distanceCalcTime(patientVectors, null, edf, null, ids, null, writerEuclidean, null, 50048, ids.length,
-						false);
+				distanceCalcTime(patientVectors, null, edf, null, null, writerEuclidean, null);
 				System.out.println("\t Step 2.3 \t MANHATTAN DISTANCES");
-				distanceCalcTime(patientVectors, null, null, mdf, ids, null, null, writerManhattan, 50048, ids.length,
-						false);
+				distanceCalcTime(patientVectors, null, null, mdf, null, null, writerManhattan);
 			} else {
-				Writer writerCosine = new BufferedWriter(
-						new OutputStreamWriter(new FileOutputStream("output/cosine_VM3"), "utf-8"));
-				Writer writerEuclidean = new BufferedWriter(
-						new OutputStreamWriter(new FileOutputStream("output/euclidean_VM3"), "utf-8"));
-				Writer writerManhattan = new BufferedWriter(
-						new OutputStreamWriter(new FileOutputStream("output/manhattan_VM3"), "utf-8"));
+				Writer writerCosine = new BufferedWriter(new OutputStreamWriter(
+						new FileOutputStream("/home/nicole.sarna/elkiExample/output/cosine_VM3"), "utf-8"));
+				Writer writerEuclidean = new BufferedWriter(new OutputStreamWriter(
+						new FileOutputStream("/home/nicole.sarna/elkiExample/output/euclidean_VM3"), "utf-8"));
+				Writer writerManhattan = new BufferedWriter(new OutputStreamWriter(
+						new FileOutputStream("/home/nicole.sarna/elkiExample/output/manhattan_VM3"), "utf-8"));
 
 				System.out.println("\t Step 2.1 \t COSINE DISTANCES");
-				distanceCalcTime(patientVectors, cdf, null, null, ids, writerCosine, null, null, 0, 50048, true);
+				distanceCalcTime(patientVectors, cdf, null, null, writerCosine, null, null);
 				System.out.println("\t Step 2.2 \t EUCLIDEAN DISTANCES");
-				distanceCalcTime(patientVectors, null, edf, null, ids, null, writerEuclidean, null, 0, 50048, true);
+				distanceCalcTime(patientVectors, null, edf, null, null, writerEuclidean, null);
 				System.out.println("\t Step 2.3 \t MANHATTAN DISTANCES");
-				distanceCalcTime(patientVectors, null, null, mdf, ids, null, null, writerManhattan, 0, 50048, true);
+				distanceCalcTime(patientVectors, null, null, mdf, null, null, writerManhattan);
 			}
 		} finally {
 		}
 	}
 
-	private static void distanceCalcTime(Map<String, Vector> patientVectors, CosineDistanceFunction cdf,
-			EuclideanDistanceFunction edf, ManhattanDistanceFunction mdf, String[] ids, Writer writerCosine,
-			Writer writerEuclidean, Writer writerManhattan, int start, int length, boolean isVM3) throws IOException {
-		long startTimeCosine = System.nanoTime();
-		if (isVM3) {
-			for (int i = start; i < length; i++) {
-				for (int j = length; j < ids.length; j++) {
-					writeFile(patientVectors, cdf, edf, mdf, writerCosine, writerEuclidean, writerManhattan, ids, i, j);
-				}
-			}
+	private static void chunkingCalc(Map<Integer, Vector> vectors, int vmID)
+			throws UnsupportedEncodingException, FileNotFoundException, IOException {
+		int compNumOfVec = 33365;
+		int id = 1;
+		int joinID = 1;
+		int length;
+		int rowNumber;
+
+		Map<Integer, Vector> subVectors = new HashMap<>();
+		Map<Integer, Map<Integer, Vector>> finalVectors = new HashMap<>();
+
+		if (vmID == 1) {
+			rowNumber = 1;
+			length = 33365;
+		} else if (vmID == 2) {
+			rowNumber = 33366;
+			length = 66730;
 		} else {
-			for (int i = start; i < length; i++) {
-				for (int j = i + 1; j < length; j++) {
-					writeFile(patientVectors, cdf, edf, mdf, writerCosine, writerEuclidean, writerManhattan, ids, i, j);
+			rowNumber = 66731;
+			length = 100096;
+			compNumOfVec = 33366;
+		}
+
+		for (int i = rowNumber; i <= length; i++) {
+			subVectors.put(i, vectors.get(i));
+
+			if (i < vectors.size() / 2) {
+				joinID = i + 1;
+
+				while ((joinID <= (i + (vectors.size() / 2))) && (id <= compNumOfVec)) {
+					subVectors.put(joinID, vectors.get(joinID));
+					joinID = joinID + 1;
+					id += 1;
+				}
+			} else if (i == vectors.size()) {
+				while ((joinID < vectors.size() / 2) && (id <= compNumOfVec)) {
+					System.out.println("SECOND");
+					subVectors.put(joinID, vectors.get(joinID));
+					joinID = joinID + 1;
+					id += 1;
+				}
+			} else {
+				while (((id <= compNumOfVec)
+						&& (joinID < (vectors.size() / 2 - (vectors.size() - i) % (vectors.size() / 2))))) {
+					System.out.println("THIRD");
+					subVectors.put(joinID, vectors.get(joinID));
+					joinID = joinID + 1;
+					id += 1;
+				}
+
+				joinID = i + 1;
+
+				while ((id <= compNumOfVec) && ((joinID > i) && (joinID <= vectors.size()))) {
+					subVectors.put(joinID, vectors.get(joinID));
+					joinID = joinID + 1;
+					id += 1;
 				}
 			}
+			finalVectors.put(i, subVectors);
 		}
-		long stopTime = System.nanoTime();
-		long duration = stopTime - startTimeCosine;
-		final double minutes = ((double) duration * 0.0000000000166667);
-		System.out.println(" -> " + new DecimalFormat("###.##########").format(minutes) + "minutes");
+		calcDistance(finalVectors, vmID);
 	}
 
-	/***
-	 * 
-	 * Used in {@code calcDistance(Map<String, Vector> patientVectors, int vmID)} to
-	 * 
-	 * actually print the calculated results in the output folder as files in
-	 * schema*<i>patientID1,patientID2,distance</i>.**
-	 * 
-	 * @param patientVectors
-	 * @param cdf
-	 * @param edf
-	 * @param mdf
-	 * @param writerCosine
-	 * @param writerEuclidean
-	 * @param writerManhattan
-	 * @param ids
-	 * @param i
-	 * @param j
-	 * @throws IOException
-	 */
-	private static void writeFile(Map<String, Vector> patientVectors, CosineDistanceFunction cdf,
+	private static void distanceCalcTime(Map<Integer, Map<Integer, Vector>> patientVectors, CosineDistanceFunction cdf,
 			EuclideanDistanceFunction edf, ManhattanDistanceFunction mdf, Writer writerCosine, Writer writerEuclidean,
-			Writer writerManhattan, String[] ids, int i, int j) throws IOException {
-		Vector v1 = patientVectors.get(ids[i]);
-		Vector v2 = patientVectors.get(ids[j]);
-
-		String patient1 = admissionPatientMap.get(ids[i]);
-		String patient2 = admissionPatientMap.get(ids[j]);
+			Writer writerManhattan) throws IOException {
+		long startTime = System.nanoTime();
 
 		if (cdf != null) {
-			writerCosine.write(patient1 + "," + patient2 + "," + cdf.distance(v1, v2) + "\n");
+			for (int id = 1; id <= patientVectors.size(); id++) {
+				for (int id_2 = 2; id_2 < patientVectors.get(id).size(); id_2++) {
+					writerCosine.write(admissionPatientMap.get(id) + "," + admissionPatientMap.get(id_2) + ","
+							+ cdf.distance(patientVectors.get(id).get(id), patientVectors.get(id).get(id_2)) + "\n");
+				}
+			}
 		} else if (edf != null) {
-			writerEuclidean.write(patient1 + "," + patient2 + "," + edf.distance(v1, v2) + "\n");
+			for (int id = 1; id <= patientVectors.size(); id++) {
+				for (int id_2 = 1; id_2 < patientVectors.get(id).size(); id_2++) {
+					writerEuclidean.write(admissionPatientMap.get(id) + "," + admissionPatientMap.get(id_2) + ","
+							+ edf.distance(patientVectors.get(id).get(id), patientVectors.get(id).get(id_2)) + "\n");
+				}
+			}
 		} else {
-			writerManhattan.write(patient1 + "," + patient2 + "," + mdf.distance(v1, v2) + "\n");
+			for (int id = 1; id <= patientVectors.size(); id++) {
+				for (int id_2 = 2; id_2 < patientVectors.get(id).size(); id_2++) {
+					writerManhattan.write(admissionPatientMap.get(id) + "," + admissionPatientMap.get(id_2) + ","
+							+ mdf.distance(patientVectors.get(id).get(id), patientVectors.get(id).get(id_2)) + "\n");
+				}
+			}
 		}
+
+		long stopTime = System.nanoTime();
+		long duration = stopTime - startTime;
+		final double minutes = ((double) duration * 0.0000000000166667);
+		System.out.println(" -> " + new DecimalFormat("###.##########").format(minutes) + " min");
 	}
 }
