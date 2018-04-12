@@ -395,7 +395,6 @@ public class Calculation {
 				}
 			} else if (i == vectors.size()) {
 				while ((joinID < vectors.size() / 2) && (id <= compNumOfVec)) {
-					System.out.println("SECOND");
 					subVectors.put(joinID, vectors.get(joinID));
 					joinID = joinID + 1;
 					id += 1;
@@ -403,7 +402,6 @@ public class Calculation {
 			} else {
 				while (((id <= compNumOfVec)
 						&& (joinID < (vectors.size() / 2 - (vectors.size() - i) % (vectors.size() / 2))))) {
-					System.out.println("THIRD");
 					subVectors.put(joinID, vectors.get(joinID));
 					joinID = joinID + 1;
 					id += 1;
