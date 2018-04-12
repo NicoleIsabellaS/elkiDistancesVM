@@ -325,7 +325,7 @@ public class Calculation {
 				System.out.println("\t Step 2.2 \t EUCLIDEAN DISTANCES");
 				distanceCalcTime(patientVectors, null, edf, null, null, writerEuclidean, null,vmID);
 				System.out.println("\t Step 2.3 \t MANHATTAN DISTANCES");
-				distanceCalcTime(patientVectors, null, null, mdf, null, null, writerManhattan),vmID;
+				distanceCalcTime(patientVectors, null, null, mdf, null, null, writerManhattan,vmID);
 			} else if (vmID == 2) {
 				Writer writerCosine = new BufferedWriter(new OutputStreamWriter(
 						new FileOutputStream("/home/nicole.sarna/elkiDistancesVM/elkiExample/src/output/cosine_VM2"), "utf-8"));
