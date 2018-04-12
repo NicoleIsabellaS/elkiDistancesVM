@@ -422,28 +422,55 @@ public class Calculation {
 
 	private static void distanceCalcTime(Map<Integer, Map<Integer, Vector>> patientVectors, CosineDistanceFunction cdf,
 			EuclideanDistanceFunction edf, ManhattanDistanceFunction mdf, Writer writerCosine, Writer writerEuclidean,
-			Writer writerManhattan) throws IOException {
+			Writer writerManhattan, int vmID) throws IOException {
+
+		int start;
+		int length;
+
+		if (vmID == 1) {
+			start = 1;
+			length = 33365;
+		} else if (vmID == 2) {
+			start = 33366;
+			length = 66730;
+		} else {
+			start = 66731;
+			length = 100096;
+		}
+
 		long startTime = System.nanoTime();
 
 		if (cdf != null) {
-			for (int id = 1; id <= patientVectors.size(); id++) {
-				for (int id_2 = 2; id_2 < patientVectors.get(id).size(); id_2++) {
-					writerCosine.write(admissionPatientMap.get(id) + "," + admissionPatientMap.get(id_2) + ","
-							+ cdf.distance(patientVectors.get(id).get(id), patientVectors.get(id).get(id_2)) + "\n");
+			for (int id = start; id <= length; id++) {
+				Iterator<?> it = patientVectors.get(id).entrySet().iterator();
+				while (it.hasNext()) {
+					Map.Entry pair = (Map.Entry) it.next();
+					System.out.println(patientVectors.get(id).get(pair.getKey()));
+					writerCosine.write(admissionPatientMap.get(id) + "," + admissionPatientMap.get(pair.getKey()) + ","
+							+ cdf.distance(patientVectors.get(id).get(id), patientVectors.get(id).get(pair.getKey()))
+							+ "\n");
 				}
 			}
 		} else if (edf != null) {
-			for (int id = 1; id <= patientVectors.size(); id++) {
-				for (int id_2 = 1; id_2 < patientVectors.get(id).size(); id_2++) {
-					writerEuclidean.write(admissionPatientMap.get(id) + "," + admissionPatientMap.get(id_2) + ","
-							+ edf.distance(patientVectors.get(id).get(id), patientVectors.get(id).get(id_2)) + "\n");
+			for (int id = start; id <= length; id++) {
+				Iterator<?> it = patientVectors.get(id).entrySet().iterator();
+				while (it.hasNext()) {
+					Map.Entry pair = (Map.Entry) it.next();
+					writerEuclidean.write(admissionPatientMap.get(id) + "," + admissionPatientMap.get(pair.getKey())
+							+ ","
+							+ edf.distance(patientVectors.get(id).get(id), patientVectors.get(id).get(pair.getKey()))
+							+ "\n");
 				}
 			}
 		} else {
-			for (int id = 1; id <= patientVectors.size(); id++) {
-				for (int id_2 = 2; id_2 < patientVectors.get(id).size(); id_2++) {
-					writerManhattan.write(admissionPatientMap.get(id) + "," + admissionPatientMap.get(id_2) + ","
-							+ mdf.distance(patientVectors.get(id).get(id), patientVectors.get(id).get(id_2)) + "\n");
+			for (int id = start; id <= length; id++) {
+				Iterator<?> it = patientVectors.get(id).entrySet().iterator();
+				while (it.hasNext()) {
+					Map.Entry pair = (Map.Entry) it.next();
+					writerManhattan.write(admissionPatientMap.get(id) + "," + admissionPatientMap.get(pair.getKey())
+							+ ","
+							+ mdf.distance(patientVectors.get(id).get(id), patientVectors.get(id).get(pair.getKey()))
+							+ "\n");
 				}
 			}
 		}
