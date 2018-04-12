@@ -442,35 +442,23 @@ public class Calculation {
 
 		if (cdf != null) {
 			for (int id = start; id <= length; id++) {
-				Iterator<?> it = patientVectors.get(id).entrySet().iterator();
-				while (it.hasNext()) {
-					Map.Entry pair = (Map.Entry) it.next();
-					System.out.println(patientVectors.get(id).get(pair.getKey()));
-					writerCosine.write(admissionPatientMap.get(id) + "," + admissionPatientMap.get(pair.getKey()) + ","
-							+ cdf.distance(patientVectors.get(id).get(id), patientVectors.get(id).get(pair.getKey()))
-							+ "\n");
+				for (Integer key : patientVectors.get(id).keySet()) {
+					writerCosine.write(admissionPatientMap.get(id) + "," + admissionPatientMap.get(key) + ","
+							+ cdf.distance(patientVectors.get(id).get(id), patientVectors.get(id).get(key)) + "\n");
 				}
 			}
 		} else if (edf != null) {
 			for (int id = start; id <= length; id++) {
-				Iterator<?> it = patientVectors.get(id).entrySet().iterator();
-				while (it.hasNext()) {
-					Map.Entry pair = (Map.Entry) it.next();
-					writerEuclidean.write(admissionPatientMap.get(id) + "," + admissionPatientMap.get(pair.getKey())
-							+ ","
-							+ edf.distance(patientVectors.get(id).get(id), patientVectors.get(id).get(pair.getKey()))
-							+ "\n");
+				for (Integer key : patientVectors.get(id).keySet()) {
+					writerEuclidean.write(admissionPatientMap.get(id) + "," + admissionPatientMap.get(key) + ","
+							+ edf.distance(patientVectors.get(id).get(id), patientVectors.get(id).get(key)) + "\n");
 				}
 			}
 		} else {
 			for (int id = start; id <= length; id++) {
-				Iterator<?> it = patientVectors.get(id).entrySet().iterator();
-				while (it.hasNext()) {
-					Map.Entry pair = (Map.Entry) it.next();
-					writerManhattan.write(admissionPatientMap.get(id) + "," + admissionPatientMap.get(pair.getKey())
-							+ ","
-							+ mdf.distance(patientVectors.get(id).get(id), patientVectors.get(id).get(pair.getKey()))
-							+ "\n");
+				for (Integer key : patientVectors.get(id).keySet()) {
+					writerManhattan.write(admissionPatientMap.get(id) + "," + admissionPatientMap.get(key) + ","
+							+ mdf.distance(patientVectors.get(id).get(id), patientVectors.get(id).get(key)) + "\n");
 				}
 			}
 		}
