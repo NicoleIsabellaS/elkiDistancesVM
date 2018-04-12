@@ -314,11 +314,11 @@ public class Calculation {
 
 			if (vmID == 1) {
 				Writer writerCosine = new BufferedWriter(new OutputStreamWriter(
-						new FileOutputStream("/home/nicole.sarna/elkiExample/output/cosine_VM1"), "utf-8"));
+						new FileOutputStream("/home/nicole.sarna/elkiDistancesVM/elkiExample/src/output/cosine_VM1"), "utf-8"));
 				Writer writerEuclidean = new BufferedWriter(new OutputStreamWriter(
-						new FileOutputStream("/home/nicole.sarna/elkiExample/output/euclidean_VM1"), "utf-8"));
+						new FileOutputStream("/home/nicole.sarna/elkiDistancesVM/elkiExample/src/output/euclidean_VM1"), "utf-8"));
 				Writer writerManhattan = new BufferedWriter(new OutputStreamWriter(
-						new FileOutputStream("/home/nicole.sarna/elkiExample/output/manhattan_VM1"), "utf-8"));
+						new FileOutputStream("/home/nicole.sarna/elkiDistancesVM/elkiExample/src/output/manhattan_VM1"), "utf-8"));
 
 				System.out.println("\t Step 2.1 \t COSINE DISTANCES");
 				distanceCalcTime(patientVectors, cdf, null, null, writerCosine, null, null);
@@ -328,11 +328,11 @@ public class Calculation {
 				distanceCalcTime(patientVectors, null, null, mdf, null, null, writerManhattan);
 			} else if (vmID == 2) {
 				Writer writerCosine = new BufferedWriter(new OutputStreamWriter(
-						new FileOutputStream("/home/nicole.sarna/elkiExample/output/cosine_VM2"), "utf-8"));
+						new FileOutputStream("/home/nicole.sarna/elkiDistancesVM/elkiExample/src/output/cosine_VM2"), "utf-8"));
 				Writer writerEuclidean = new BufferedWriter(new OutputStreamWriter(
-						new FileOutputStream("/home/nicole.sarna/elkiExample/output/euclidean_VM2"), "utf-8"));
+						new FileOutputStream("/home/nicole.sarna/elkiDistancesVM/elkiExample/src/output/euclidean_VM2"), "utf-8"));
 				Writer writerManhattan = new BufferedWriter(new OutputStreamWriter(
-						new FileOutputStream("/home/nicole.sarna/elkiExample/output/manhattan_VM2"), "utf-8"));
+						new FileOutputStream("/home/nicole.sarna/elkiDistancesVM/elkiExample/src/output/manhattan_VM2"), "utf-8"));
 
 				System.out.println("\t Step 2.1 \t COSINE DISTANCES");
 				distanceCalcTime(patientVectors, cdf, null, null, writerCosine, null, null);
@@ -342,11 +342,11 @@ public class Calculation {
 				distanceCalcTime(patientVectors, null, null, mdf, null, null, writerManhattan);
 			} else {
 				Writer writerCosine = new BufferedWriter(new OutputStreamWriter(
-						new FileOutputStream("/home/nicole.sarna/elkiExample/output/cosine_VM3"), "utf-8"));
+						new FileOutputStream("/home/nicole.sarna/elkiDistancesVM/elkiExample/src/output/cosine_VM3"), "utf-8"));
 				Writer writerEuclidean = new BufferedWriter(new OutputStreamWriter(
-						new FileOutputStream("/home/nicole.sarna/elkiExample/output/euclidean_VM3"), "utf-8"));
+						new FileOutputStream("/home/nicole.sarna/elkiDistancesVM/elkiExample/src/output/euclidean_VM3"), "utf-8"));
 				Writer writerManhattan = new BufferedWriter(new OutputStreamWriter(
-						new FileOutputStream("/home/nicole.sarna/elkiExample/output/manhattan_VM3"), "utf-8"));
+						new FileOutputStream("/home/nicole.sarna/elkiDistancesVM/elkiExample/src/output/manhattan_VM3"), "utf-8"));
 
 				System.out.println("\t Step 2.1 \t COSINE DISTANCES");
 				distanceCalcTime(patientVectors, cdf, null, null, writerCosine, null, null);
