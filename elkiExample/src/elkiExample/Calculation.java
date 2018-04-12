@@ -30,7 +30,7 @@ import de.lmu.ifi.dbs.elki.math.linearalgebra.Vector;
  */
 public class Calculation {
 
-	static String path = "/home/nicole.sarna/elkiDistancesVM/elkiExample/src/data.csv";
+	static String path = "/home/nicole.sarna/elkiDistancesVM/elkiExample/src/elkiExample/data.csv";
 	static Map<Integer, String> admissionPatientMap = new HashMap<>();
 
 	/**
