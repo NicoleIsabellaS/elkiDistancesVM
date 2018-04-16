@@ -361,7 +361,7 @@ public class Calculation {
 
 	private static void chunkingCalc(Map<Integer, Vector> vectors, int vmID)
 			throws UnsupportedEncodingException, FileNotFoundException, IOException {
-		int compNumOfVec = 33365;
+		int compNumOfVec = 50048;
 		int id = 1;
 		int joinID = 1;
 		int length;
@@ -372,14 +372,13 @@ public class Calculation {
 
 		if (vmID == 1) {
 			rowNumber = 1;
-			length = 33365;
+			length = 33366;
 		} else if (vmID == 2) {
-			rowNumber = 33366;
-			length = 66730;
+			rowNumber = 33367;
+			length = 66732;
 		} else {
-			rowNumber = 66731;
-			length = 100096;
-			compNumOfVec = 33366;
+			rowNumber = 66733;
+			length = 100097;
 		}
 
 		for (int i = rowNumber; i <= length; i++) {
@@ -428,14 +427,14 @@ public class Calculation {
 		int length;
 
 		if (vmID == 1) {
-			start = 1;
-			length = 33365;
+			rowNumber = 1;
+			length = 33366;
 		} else if (vmID == 2) {
-			start = 33366;
-			length = 66730;
+			rowNumber = 33367;
+			length = 66732;
 		} else {
-			start = 66731;
-			length = 100096;
+			rowNumber = 66733;
+			length = 100097;
 		}
 
 		long startTime = System.nanoTime();
